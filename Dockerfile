@@ -17,8 +17,8 @@ RUN cd client && npm install --legacy-peer-deps --loglevel=error
 # Copiar todos os arquivos
 COPY . .
 
-# Build do front-end com Vite
-RUN cd client && VITE_API_URL=http://localhost:3001 npm run build
+# Build do front-end com Vite. Aqui está a URL do load balancer
+RUN cd client && VITE_API_URL=http://bia-alb-900003933.us-east-1.elb.amazonaws.com npm run build
 
 # Limpeza das dependências de desenvolvimento do client para reduzir tamanho
 RUN cd client && npm prune --production && rm -rf node_modules/.cache

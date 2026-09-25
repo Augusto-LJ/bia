@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projeto BIA — Arquitetura AWS</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 32px 24px 48px;
+    }
+
+    /* ─── HEADER ─────────────────────────────────────────────── */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #58a6ff;
+    }
+    .header p {
+      margin-top: 6px;
+      font-size: 0.95rem;
+      color: #8b949e;
+    }
+    .badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #1f6feb33;
+      border: 1px solid #1f6feb;
+      color: #58a6ff;
+    }
+
+    /* ─── LAYOUT PRINCIPAL ───────────────────────────────────── */
+    .diagram {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ─── CARDS / BOXES ──────────────────────────────────────── */
+    .box {
+      border-radius: 12px;
+      padding: 20px 24px;
+      border: 1px solid #30363d;
+      background: #161b22;
+      position: relative;
+    }
+    .box-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 14px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    /* colour themes */
+    .theme-orange  { border-color: #f0883e55; }
+    .theme-orange .box-title  { background: #f0883e22; color: #f0883e; }
+
+    .theme-blue    { border-color: #58a6ff55; }
+    .theme-blue .box-title    { background: #58a6ff22; color: #58a6ff; }
+
+    .theme-green   { border-color: #3fb95055; }
+    .theme-green .box-title   { background: #3fb95022; color: #3fb950; }
+
+    .theme-purple  { border-color: #bc8cff55; }
+    .theme-purple .box-title  { background: #bc8cff22; color: #bc8cff; }
+
+    .theme-teal    { border-color: #39d3f255; }
+    .theme-teal .box-title    { background: #39d3f222; color: #39d3f2; }
+
+    .theme-red     { border-color: #f8514955; }
+    .theme-red .box-title     { background: #f8514922; color: #f85149; }
+
+    .theme-gray    { border-color: #8b949e55; }
+    .theme-gray .box-title    { background: #8b949e22; color: #8b949e; }
+
+    /* ─── SERVICE CARDS (chips) ──────────────────────────────── */
+    .services-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .svc {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-radius: 10px;
+      padding: 14px 18px;
+      border: 1px solid #30363d;
+      background: #0d1117;
+      min-width: 130px;
+      flex: 1;
+      gap: 8px;
+      transition: transform 0.15s;
+    }
+    .svc:hover { transform: translateY(-2px); }
+
+    .svc-icon {
+      font-size: 1.9rem;
+      line-height: 1;
+    }
+    .svc-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #e6edf3;
+    }
+    .svc-detail {
+      font-size: 0.7rem;
+      color: #8b949e;
+      line-height: 1.4;
+    }
+    .svc-tag {
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* ─── ARROW ROW ──────────────────────────────────────────── */
+    .arrow-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      color: #8b949e;
+      font-size: 0.78rem;
+    }
+    .arrow-row .arrow { font-size: 1.4rem; color: #30363d; }
+    .arrow-label {
+      font-size: 0.72rem;
+      color: #8b949e;
+      font-style: italic;
+    }
+
+    /* ─── FLOW SECTION (pipeline) ────────────────────────────── */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid #30363d;
+      background: #0d1117;
+      min-width: 110px;
+      text-align: center;
+    }
+    .flow-step .icon { font-size: 1.6rem; }
+    .flow-step .name { font-size: 0.78rem; font-weight: 600; }
+    .flow-step .sub  { font-size: 0.65rem; color: #8b949e; }
+    .flow-arrow { font-size: 1.4rem; color: #30363d; padding: 0 4px; }
+
+    /* ─── AZ GRID ────────────────────────────────────────────── */
+    .az-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .az-box {
+      border-radius: 10px;
+      border: 1px dashed #30363d;
+      padding: 14px;
+      background: #0d111780;
+    }
+    .az-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #8b949e;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .az-label::before {
+      content: '';
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #8b949e;
+    }
+
+    /* ─── KIRO SECTION ───────────────────────────────────────── */
+    .kiro-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #bc8cff55;
+      background: #161b22;
+    }
+    .kiro-avatar {
+      font-size: 3rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .kiro-info h3 {
+      font-size: 1rem;
+      color: #bc8cff;
+      margin-bottom: 6px;
+    }
+    .kiro-info p {
+      font-size: 0.78rem;
+      color: #8b949e;
+      line-height: 1.6;
+    }
+    .kiro-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .kiro-tag {
+      font-size: 0.68rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: #bc8cff22;
+      border: 1px solid #bc8cff55;
+      color: #bc8cff;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      margin-top: 36px;
+      font-size: 0.72rem;
+      color: #484f58;
+    }
+    .footer span { color: #8b949e; }
+
+    /* ─── MISC ───────────────────────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .full-row { grid-column: 1 / -1; }
+
+    @media (max-width: 700px) {
+      .az-grid, .two-col { grid-template-columns: 1fr; }
+      .flow { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🚀 Projeto BIA</h1>
+  <p>Formação AWS — Arquitetura completa de infraestrutura em AWS</p>
+  <span class="badge">us-east-1 · N. Virginia</span>
+</div>
+
+<div class="diagram">
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCO 1 — USUÁRIO & ACESSO
+  ═══════════════════════════════════════════════ -->
+  <div class="box theme-blue">
+    <div class="box-title">👥 Usuários &amp; Acesso</div>
+    <div class="services-row">
+
+      <div class="svc">
+        <div class="svc-icon">🌐</div>
+        <div class="svc-name">Usuário Final</div>
+        <div class="svc-detail">Acessa a aplicação via browser</div>
+        <span class="svc-tag" style="background:#58a6ff22;color:#58a6ff;border:1px solid #58a6ff44;">HTTP 80</span>
+      </div>
+
+      <div class="svc">
+        <div class="svc-icon">👨‍💻</div>
+        <div class="svc-name">Desenvolvedor</div>
+        <div class="svc-detail">Push para GitHub<br/>Acesso via SSM Session</div>
+        <span class="svc-tag" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044;">GitHub</span>
+      </div>
+
+      <div class="svc">
+        <div class="svc-icon">🔑</div>
+        <div class="svc-name">AWS SSM</div>
+        <div class="svc-detail">Session Manager<br/>Acesso sem SSH/keypair</div>
+        <span class="svc-tag" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44;">role-acesso-ssm</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCO 2 — CI/CD PIPELINE
+  ═══════════════════════════════════════════════ -->
+  <div class="box theme-orange">
+    <div class="box-title">⚙️ Pipeline CI/CD — CodePipeline + CodeBuild</div>
+    <div class="flow">
+
+      <div class="flow-step">
+        <div class="icon">🐙</div>
+        <div class="name">GitHub</div>
+        <div class="sub">Source<br/>trigger no push</div>
+      </div>
+      <div class="flow-arrow">→</div>
+
+      <div class="flow-step">
+        <div class="icon">🔨</div>
+        <div class="name">CodeBuild</div>
+        <div class="sub">buildspec.yml<br/>docker build + push</div>
+      </div>
+      <div class="flow-arrow">→</div>
+
+      <div class="flow-step">
+        <div class="icon">📦</div>
+        <div class="name">ECR</div>
+        <div class="sub">Registry: bia<br/>latest + commit hash</div>
+      </div>
+      <div class="flow-arrow">→</div>
+
+      <div class="flow-step">
+        <div class="icon">🚢</div>
+        <div class="name">ECS Deploy</div>
+        <div class="sub">imagedefinitions.json<br/>Rolling Update</div>
+      </div>
+      <div class="flow-arrow">→</div>
+
+      <div class="flow-step">
+        <div class="icon">✅</div>
+        <div class="name">Produção</div>
+        <div class="sub">2 tasks rodando<br/>steady state</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCO 3 — ALB + TARGET GROUPS
+  ═══════════════════════════════════════════════ -->
+  <div class="box theme-teal">
+    <div class="box-title">⚖️ Application Load Balancer</div>
+    <div class="services-row">
+
+      <div class="svc" style="flex:2; flex-direction:row; gap:16px; justify-content:flex-start; text-align:left;">
+        <div style="font-size:2.4rem;">🔀</div>
+        <div>
+          <div class="svc-name" style="font-size:0.9rem;">bia-alb</div>
+          <div class="svc-detail" style="margin-top:4px;">
+            internet-facing · HTTP :80<br/>
+            DNS: bia-alb-900003933.us-east-1.elb.amazonaws.com<br/>
+            AZs: us-east-1a + us-east-1b
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+            <span class="svc-tag" style="background:#39d3f222;color:#39d3f2;border:1px solid #39d3f244;">SG: bia-alb</span>
+            <span class="svc-tag" style="background:#39d3f222;color:#39d3f2;border:1px solid #39d3f244;">inbound: 0.0.0.0/0:80</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="svc">
+        <div class="svc-icon">🎯</div>
+        <div class="svc-name">tg-bia</div>
+        <div class="svc-detail">type: instance<br/>port: 80 (prod)</div>
+        <span class="svc-tag" style="background:#39d3f222;color:#39d3f2;border:1px solid #39d3f244;">service-bia-alb</span>
+      </div>
+
+      <div class="svc">
+        <div class="svc-icon">🎯</div>
+        <div class="svc-name">tg-bia-dev</div>
+        <div class="svc-detail">type: instance<br/>port: 80 (dev)</div>
+        <span class="svc-tag" style="background:#8b949e22;color:#8b949e;border:1px solid #8b949e44;">service-bia-alb-dev</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCO 4 — ECS CLUSTER (2 AZs)
+  ═══════════════════════════════════════════════ -->
+  <div class="box theme-green">
+    <div class="box-title">🐳 ECS Cluster — cluster-bia-alb (EC2 Launch Type)</div>
+
+    <div class="az-grid">
+
+      <!-- AZ A -->
+      <div class="az-box">
+        <div class="az-label">us-east-1a</div>
+        <div class="services-row">
+          <div class="svc">
+            <div class="svc-icon">🖥️</div>
+            <div class="svc-name">EC2 (ECS Host)</div>
+            <div class="svc-detail">t3.micro<br/>SG: bia-ec2<br/>i-0e11069a...</div>
+          </div>
+          <div class="svc">
+            <div class="svc-icon">📦</div>
+            <div class="svc-name">Task BIA</div>
+            <div class="svc-detail">container: bia<br/>port: 8080<br/>mem: 400MB · 1vCPU</div>
+            <span class="svc-tag" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044;">task-def-bia-alb</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AZ B -->
+      <div class="az-box">
+        <div class="az-label">us-east-1b</div>
+        <div class="services-row">
+          <div class="svc">
+            <div class="svc-icon">🖥️</div>
+            <div class="svc-name">EC2 (ECS Host)</div>
+            <div class="svc-detail">t3.micro<br/>SG: bia-ec2<br/>i-0fd259de...</div>
+          </div>
+          <div class="svc">
+            <div class="svc-icon">📦</div>
+            <div class="svc-name">Task BIA</div>
+            <div class="svc-detail">container: bia<br/>port: 8080<br/>mem: 400MB · 1vCPU</div>
+            <span class="svc-tag" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044;">task-def-bia-alb</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Services -->
+    <div style="margin-top:16px;">
+      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#8b949e;margin-bottom:10px;">ECS Services</div>
+      <div class="services-row">
+        <div class="svc">
+          <div class="svc-icon">🟢</div>
+          <div class="svc-name">service-bia-alb</div>
+          <div class="svc-detail">desired: 2 · running: 2<br/>Rolling Update<br/>min 50% · max 100%</div>
+          <span class="svc-tag" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044;">PROD</span>
+        </div>
+        <div class="svc">
+          <div class="svc-icon">🔵</div>
+          <div class="svc-name">service-bia-alb-dev</div>
+          <div class="svc-detail">desired: 2 · running: 2<br/>Rolling Update<br/>min 50% · max 100%</div>
+          <span class="svc-tag" style="background:#58a6ff22;color:#58a6ff;border:1px solid #58a6ff44;">DEV</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCO 5 — DATABASE + DEV EC2
+  ═══════════════════════════════════════════════ -->
+  <div class="two-col">
+
+    <div class="box theme-red">
+      <div class="box-title">🗄️ Banco de Dados — RDS</div>
+      <div class="svc" style="flex-direction:row;gap:14px;justify-content:flex-start;text-align:left;min-width:unset;">
+        <div style="font-size:2.2rem;">🐘</div>
+        <div>
+          <div class="svc-name">bia (RDS)</div>
+          <div class="svc-detail" style="margin-top:4px;">
+            PostgreSQL 18.3<br/>
+            db.t3.micro · us-east-1a<br/>
+            Porta: 5432
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+            <span class="svc-tag" style="background:#f8514922;color:#f85149;border:1px solid #f8514944;">SG: bia-db</span>
+            <span class="svc-tag" style="background:#f8514922;color:#f85149;border:1px solid #f8514944;">inbound: bia-ec2 + bia-dev</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box theme-gray">
+      <div class="box-title">🛠️ EC2 de Desenvolvimento</div>
+      <div class="svc" style="flex-direction:row;gap:14px;justify-content:flex-start;text-align:left;min-width:unset;">
+        <div style="font-size:2.2rem;">💻</div>
+        <div>
+          <div class="svc-name">bia-dev</div>
+          <div class="svc-detail" style="margin-top:4px;">
+            t3.micro · us-east-1a<br/>
+            Amazon Linux 2023<br/>
+            Docker + AWS CLI + Node.js 24
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+            <span class="svc-tag" style="background:#8b949e22;color:#8b949e;border:1px solid #8b949e44;">SG: bia-dev</span>
+            <span class="svc-tag" style="background:#8b949e22;color:#8b949e;border:1px solid #8b949e44;">IAM: role-acesso-ssm</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCO 6 — KIRO (AGENTE IA)
+  ═══════════════════════════════════════════════ -->
+  <div class="box theme-purple">
+    <div class="box-title">🤖 Kiro — Agente de IA (DevOps Engineer)</div>
+    <div class="kiro-box" style="border:none;padding:0;background:transparent;">
+      <div class="kiro-avatar">🤖</div>
+      <div class="kiro-info">
+        <h3>Kiro — AI Agent integrado ao projeto</h3>
+        <p>
+          Agente de IA especialista em DevOps &amp; AWS Cloud, rodando dentro da EC2 <strong>bia-dev</strong>.
+          Tem acesso à infraestrutura via <strong>role da instância</strong>, ao banco de dados via MCP PostgreSQL
+          e à AWS via MCP AWS. Usa o Kiro CLI para executar tarefas diretamente no ambiente,
+          auxiliando o desenvolvedor em tempo real durante a Formação AWS.
+        </p>
+        <div class="kiro-tags">
+          <span class="kiro-tag">MCP: aws-mcp (us-east-1)</span>
+          <span class="kiro-tag">MCP: postgres-mcp (localhost:5433)</span>
+          <span class="kiro-tag">Acesso: role-acesso-ssm</span>
+          <span class="kiro-tag">Shell + AWS CLI + Boto3</span>
+          <span class="kiro-tag">ECS · ECR · RDS · ALB</span>
+          <span class="kiro-tag">CodeBuild · IAM · EC2 · SSM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOCO 7 — APLICAÇÃO
+  ═══════════════════════════════════════════════ -->
+  <div class="box theme-blue">
+    <div class="box-title">📱 Aplicação BIA</div>
+    <div class="services-row">
+
+      <div class="svc">
+        <div class="svc-icon">⚛️</div>
+        <div class="svc-name">Frontend</div>
+        <div class="svc-detail">React 17 + Vite<br/>servido pelo Express</div>
+        <span class="svc-tag" style="background:#58a6ff22;color:#58a6ff;border:1px solid #58a6ff44;">porta 8080</span>
+      </div>
+
+      <div class="svc">
+        <div class="svc-icon">🟢</div>
+        <div class="svc-name">Backend API</div>
+        <div class="svc-detail">Node.js + Express<br/>/api/tarefas · /api/versao</div>
+        <span class="svc-tag" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044;">REST API</span>
+      </div>
+
+      <div class="svc">
+        <div class="svc-icon">🔗</div>
+        <div class="svc-name">ORM Sequelize</div>
+        <div class="svc-detail">Migrations<br/>PostgreSQL 18.3</div>
+        <span class="svc-tag" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44;">Sequelize 6</span>
+      </div>
+
+      <div class="svc">
+        <div class="svc-icon">🐳</div>
+        <div class="svc-name">Docker</div>
+        <div class="svc-detail">Single stage<br/>node:XX-slim (ECR Public)</div>
+        <span class="svc-tag" style="background:#39d3f222;color:#39d3f2;border:1px solid #39d3f244;">Dockerfile</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       LEGENDA DE FLUXO
+  ═══════════════════════════════════════════════ -->
+  <div class="box theme-gray" style="padding:16px 24px;">
+    <div class="box-title">🔄 Fluxo de Requisição (Runtime)</div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin-top:4px;font-size:0.8rem;color:#8b949e;">
+      <span>🌐 Usuário</span>
+      <span style="color:#30363d;font-size:1.1rem;">→</span>
+      <span>⚖️ ALB :80</span>
+      <span style="color:#30363d;font-size:1.1rem;">→</span>
+      <span>🎯 Target Group</span>
+      <span style="color:#30363d;font-size:1.1rem;">→</span>
+      <span>🖥️ EC2 (porta dinâmica)</span>
+      <span style="color:#30363d;font-size:1.1rem;">→</span>
+      <span>📦 Container :8080</span>
+      <span style="color:#30363d;font-size:1.1rem;">→</span>
+      <span>🐘 RDS :5432</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin-top:12px;font-size:0.8rem;color:#8b949e;">
+      <span>👨‍💻 Git push</span>
+      <span style="color:#30363d;font-size:1.1rem;">→</span>
+      <span>🔨 CodeBuild</span>
+      <span style="color:#30363d;font-size:1.1rem;">→</span>
+      <span>📦 ECR (imagem)</span>
+      <span style="color:#30363d;font-size:1.1rem;">→</span>
+      <span>🚢 ECS Rolling Deploy</span>
+      <span style="color:#30363d;font-size:1.1rem;">→</span>
+      <span>✅ Nova versão live</span>
+    </div>
+  </div>
+
+</div><!-- /diagram -->
+
+<div class="footer">
+  Gerado por <span>Kiro AI Agent</span> · Projeto BIA — Formação AWS por <span>Henrylle Maia</span> · Imersão AWS &amp; IA — Set/2026
+</div>
+
+</body>
+</html>

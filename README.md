@@ -49,9 +49,9 @@ O tráfego HTTP (porta 80) é automaticamente redirecionado para HTTPS (porta 44
 | ECR | `bia` | 11 imagens · tags: latest + hash do commit |
 | EC2 dev | `bia-dev` | `t3.micro` — us-east-1a · acesso somente via SSM |
 
-> 📸 **[Coloque aqui um print de: Amazon ECS → Clusters → cluster-bia-alb → Services → service-bia-alb, mostrando o running count igual a 2 e o status ACTIVE]**
+<img width="1919" height="849" alt="image" src="https://github.com/user-attachments/assets/39a6c0b4-8a5a-45ff-8306-f77ea44e624a" />
 
-> 📸 **[Coloque aqui um print de: Amazon ECS → Clusters → cluster-bia-alb → Tasks, mostrando as 2 tasks com status RUNNING, cada uma em uma zona de disponibilidade diferente]**
+<img width="1919" height="857" alt="image" src="https://github.com/user-attachments/assets/a302895e-e070-4b4c-be20-96b2f3b718cc" />
 
 ---
 
@@ -75,9 +75,9 @@ Ambas as instâncias EC2 estão registradas no Target Group `tg-bia` com status 
 | _(não divulgado)_ | us-east-1a | _(porta aleatória)_ | ✅ healthy |
 | _(não divulgado)_ | us-east-1b | _(porta aleatória)_ | ✅ healthy |
 
-> 📸 **[Coloque aqui um print de: EC2 → Load Balancers → bia-alb, mostrando o estado Active, o DNS name e as duas zonas de disponibilidade configuradas]**
+<img width="1919" height="858" alt="image" src="https://github.com/user-attachments/assets/41958820-da48-4abc-9379-5b4e37ecdfcf" />
 
-> 📸 **[Coloque aqui um print de: EC2 → Target Groups → tg-bia → Targets, mostrando as duas instâncias com status healthy e suas portas dinâmicas]**
+<img width="1919" height="859" alt="image" src="https://github.com/user-attachments/assets/515feeba-e2a5-4ac1-84ba-52f9e2c40082" />
 
 ---
 
@@ -110,7 +110,7 @@ Todos os Security Groups referenciam **outros Security Groups como source** — 
 |---|---|---|---|
 | 3001 | TCP | `0.0.0.0/0` | acesso público para testes locais |
 
-> 📸 **[Coloque aqui um print de: EC2 → Security Groups, mostrando os grupos `bia-alb`, `bia-ec2` e `bia-db` com suas inbound rules]**
+<img width="1919" height="881" alt="image" src="https://github.com/user-attachments/assets/a8d55695-5ce6-4cf3-bc3d-89022a14a5db" />
 
 ---
 
@@ -137,7 +137,7 @@ Todos os Security Groups referenciam **outros Security Groups como source** — 
 | AZ Rebalancing | Desativado |
 | Placement strategy | spread por AZ + spread por instância |
 
-> 📸 **[Coloque aqui um print de: Amazon ECS → Task Definitions → task-def-bia-alb, mostrando a revisão atual, o network mode bridge e as configurações de CPU/memória do container]**
+<img width="1919" height="884" alt="image" src="https://github.com/user-attachments/assets/51147371-0362-4f13-b663-f47abcd58e05" />
 
 ---
 
@@ -156,7 +156,7 @@ Todos os Security Groups referenciam **outros Security Groups como source** — 
 
 A conexão é feita via variáveis de ambiente (`DB_HOST`, `DB_USER`, `DB_PWD`, `DB_PORT`). O código já inclui suporte a **AWS Secrets Manager** — basta definir `DB_SECRET_NAME` e `DB_REGION` para ativá-lo, sem necessidade de alterar o código.
 
-> 📸 **[Coloque aqui um print de: Amazon RDS → Databases → bia, mostrando o status Available, o endpoint, o tipo da instância e o Security Group `bia-db` associado]**
+<img width="1919" height="884" alt="image" src="https://github.com/user-attachments/assets/6d7f3aea-8325-4430-b64e-b7912ed90674" />
 
 ---
 
@@ -174,9 +174,8 @@ O build inclui o frontend React (Vite) compilado e servido diretamente pelo Expr
 - `<commit-hash>` — 7 caracteres do hash do commit para rastreabilidade (ex: `a87a00a`)
 
 **Repositório ECR:** `<account-id>.dkr.ecr.us-east-1.amazonaws.com/bia` _(account-id não divulgado)_  
-**Total de imagens armazenadas:** 11
 
-> 📸 **[Coloque aqui um print de: Amazon ECR → Repositories → bia → Images, mostrando a lista de imagens com as tags latest e os hashes de commit, tamanhos (~207 MB) e datas de push]**
+<img width="1919" height="883" alt="image" src="https://github.com/user-attachments/assets/f0ad365c-3a6f-418d-9087-306d55f227e1" />
 
 ---
 
@@ -213,9 +212,9 @@ O artefato `imagedefinitions.json` gerado pelo CodeBuild instrui o ECS sobre qua
 
 Além do pipeline automatizado, o projeto inclui o script `deploy-com-rollback.sh` para operações manuais: deploy, listagem de revisões da task definition e rollback para qualquer revisão anterior.
 
-> 📸 **[Coloque aqui um print de: AWS CodePipeline → Pipelines, mostrando o pipeline com as 3 etapas (Source, Build, Deploy) com status Succeeded na última execução]**
+<img width="1919" height="887" alt="image" src="https://github.com/user-attachments/assets/b4028494-0818-4c34-af7d-748722653b46" />
 
-> 📸 **[Coloque aqui um print de: AWS CodeBuild → Build projects → bia → Build history, mostrando o histórico de builds com status Succeeded, duração e datas]**
+<img width="1919" height="883" alt="image" src="https://github.com/user-attachments/assets/766a1283-560e-4282-8e66-050ad50c0a52" />
 
 ---
 
@@ -242,7 +241,7 @@ Docker · Docker Compose v2.23.3 · AWS CLI v2 · Node.js 24.x · Git · jq · P
 aws ssm start-session --target <instance-id> --region us-east-1
 ```
 
-> 📸 **[Coloque aqui um print de: AWS Systems Manager → Fleet Manager → Managed nodes, mostrando a instância `bia-dev` com status Online, plataforma Amazon Linux 2023 e a IAM role `role-acesso-ssm` associada]**
+<img width="1919" height="879" alt="image" src="https://github.com/user-attachments/assets/7435bdd3-e9fe-4f64-896c-ef827b21e77e" />
 
 ---
 
@@ -254,7 +253,7 @@ aws ssm start-session --target <instance-id> --region us-east-1
 - Acesso à instância de desenvolvimento **sem SSH** — somente via SSM
 - ALB com **HTTPS obrigatório** e política TLS 1.3 (`ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09`)
 
-> 📸 **[Coloque aqui um print de: IAM → Roles → role-acesso-ssm → Permissions, mostrando a policy `AmazonSSMManagedInstanceCore` anexada]**
+<img width="1919" height="883" alt="image" src="https://github.com/user-attachments/assets/c68ae6b9-ea2c-4a3b-a5e5-ed2d6d2a22f3" />
 
 ---
 
@@ -325,4 +324,4 @@ bia/
 
 ---
 
-*Projeto educacional — Formação AWS com Henrylle Maia*
+*Projeto educacional - Imersão AWS + IA com Henrylle Maia*

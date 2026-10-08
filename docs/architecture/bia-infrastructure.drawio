@@ -1,0 +1,263 @@
+<mxfile host="Electron" modified="2026-10-08T20:00:00.000Z" agent="Kiro" version="24.7.5" type="device">
+  <diagram id="bia-infra" name="BIA - Infraestrutura AWS">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  AWS Cloud (container externo)                                  -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="aws-cloud" value="AWS Cloud&#xa;us-east-1 (N. Virginia)" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_aws_cloud_alt;strokeColor=#232F3E;fillColor=#ffffff;verticalLabelPosition=top;verticalAlign=bottom;align=center;html=1;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1610" height="1120" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  Internet (fora da VPC)                                         -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="internet" value="Internet" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.internet_alt2;labelBackgroundColor=#ffffff;sketch=0;fontStyle=1;fontSize=12;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="40" y="80" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="internet-label" value="HTTP :80&#xa;HTTPS :443&#xa;0.0.0.0/0" style="text;html=1;align=center;verticalAlign=top;fontSize=10;fontColor=#232F3E;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="18" y="165" width="122" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  Application Load Balancer (fora da VPC, mas acessível)         -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="alb-group" value="SG: bia-alb&#xa;Inbound: :80, :443 ← 0.0.0.0/0" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;strokeColor=#DD344C;fillColor=#F9DADE;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="220" y="40" width="310" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="alb" value="bia-alb&#xa;Application Load Balancer&#xa;internet-facing&#xa;us-east-1a + us-east-1b&#xa;&#xa;Listener :80 → Redirect HTTPS 301&#xa;Listener :443 → Forward → tg-bia&#xa;Policy TLS: TLS13-1-2-Res-PQ-2025-09" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.application_load_balancer;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="340" y="55" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  Target Group                                                    -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="tg" value="tg-bia&#xa;Target Group&#xa;Tipo: instance&#xa;Health Check: /&#xa;Deregistration Delay: 30s" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.application_load_balancer;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="560" y="55" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  ECR                                                             -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="ecr" value="bia (ECR)&#xa;Amazon ECR&#xa;11 imagens&#xa;tags: latest + commit-hash" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecr;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="1490" y="55" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  CodePipeline                                                    -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="codepipeline" value="CodePipeline&#xa;Source → Build → Deploy" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.codepipeline;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="1350" y="55" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  CodeBuild                                                       -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="codebuild" value="CodeBuild&#xa;buildspec.yml&#xa;docker build + push ECR&#xa;imagedefinitions.json" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.codebuild;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="1420" y="55" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  VPC                                                             -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="vpc" value="VPC  |  172.31.0.0/16" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc;strokeColor=#8C4FFF;fillColor=#F4EBFF;verticalLabelPosition=top;verticalAlign=bottom;align=center;html=1;fontStyle=1;fontSize=13;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="20" y="250" width="1570" height="840" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  ECS Cluster label                                              -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="ecs-cluster-label" value="ECS Cluster: cluster-bia-alb  |  2 x EC2  |  2 Tasks RUNNING" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontStyle=1;fontColor=#147EBA;background=#E8F4FD;strokeColor=#147EBA;rounded=1;" vertex="1" parent="vpc">
+          <mxGeometry x="350" y="780" width="870" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  Subnet us-east-1a                                              -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="subnet-a" value="Subnet us-east-1a  |  172.31.0.0/20  |  Pública" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_public_subnet;strokeColor=#147EBA;fillColor=#E8F4FD;verticalLabelPosition=top;verticalAlign=bottom;align=center;html=1;fontStyle=1;fontSize=12;" vertex="1" parent="vpc">
+          <mxGeometry x="20" y="40" width="750" height="730" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  EC2 ECS Cluster - us-east-1a                                   -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="sg-ec2-a" value="SG: bia-ec2&#xa;Inbound: All TCP ← bia-alb" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;strokeColor=#DD344C;fillColor=#F9DADE;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;" vertex="1" parent="subnet-a">
+          <mxGeometry x="20" y="50" width="380" height="560" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ec2-a" value="EC2 t3.micro (ECS Cluster)&#xa;us-east-1a" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="subnet-a">
+          <mxGeometry x="160" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- Task service-bia-alb (zona A) -->
+        <mxCell id="task-a" value="Task: service-bia-alb&#xa;RUNNING&#xa;Container: bia&#xa;Port: 8080 (host: random)&#xa;CPU: 1 vCPU | Mem: 410 MB" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_ecs;strokeColor=#AD688F;fillColor=#F3EEF6;verticalLabelPosition=top;verticalAlign=bottom;align=center;html=1;fontSize=10;" vertex="1" parent="subnet-a">
+          <mxGeometry x="40" y="220" width="340" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="container-a" value="bia&#xa;Container&#xa;Image: ECR/bia:&lt;commit-hash&gt;&#xa;Port: 8080" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="subnet-a">
+          <mxGeometry x="160" y="270" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  EC2 bia-dev (us-east-1a)                                       -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="sg-dev" value="SG: bia-dev&#xa;Inbound: :3001 ← 0.0.0.0/0" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;strokeColor=#DD344C;fillColor=#F9DADE;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;" vertex="1" parent="subnet-a">
+          <mxGeometry x="430" y="50" width="290" height="290" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ec2-dev" value="bia-dev&#xa;EC2 t3.micro&#xa;Amazon Linux 2023&#xa;us-east-1a&#xa;&#xa;Acesso: SSM (sem SSH)&#xa;IAM: role-acesso-ssm&#xa;&#xa;Docker, AWS CLI v2&#xa;Node.js 24, Git, jq" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="subnet-a">
+          <mxGeometry x="540" y="65" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- SSM -->
+        <mxCell id="ssm" value="AWS SSM&#xa;Session Manager" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.systems_manager;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=9;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="subnet-a">
+          <mxGeometry x="450" y="65" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  RDS PostgreSQL (us-east-1a)                                    -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="sg-db" value="SG: bia-db&#xa;Inbound: :5432 ← bia-ec2, bia-dev" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;strokeColor=#DD344C;fillColor=#F9DADE;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;" vertex="1" parent="subnet-a">
+          <mxGeometry x="430" y="370" width="290" height="280" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rds" value="bia (RDS)&#xa;Amazon RDS PostgreSQL 18&#xa;db.t3.micro&#xa;20 GB (gp2)&#xa;Sem acesso público&#xa;Sem Multi-AZ" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="subnet-a">
+          <mxGeometry x="540" y="390" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  Subnet us-east-1b                                              -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="subnet-b" value="Subnet us-east-1b  |  172.31.80.0/20  |  Pública" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_public_subnet;strokeColor=#147EBA;fillColor=#E8F4FD;verticalLabelPosition=top;verticalAlign=bottom;align=center;html=1;fontStyle=1;fontSize=12;" vertex="1" parent="vpc">
+          <mxGeometry x="800" y="40" width="750" height="730" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  EC2 ECS Cluster - us-east-1b                                   -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="sg-ec2-b" value="SG: bia-ec2&#xa;Inbound: All TCP ← bia-alb" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;strokeColor=#DD344C;fillColor=#F9DADE;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;" vertex="1" parent="subnet-b">
+          <mxGeometry x="180" y="50" width="380" height="560" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ec2-b" value="EC2 t3.micro (ECS Cluster)&#xa;us-east-1b" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="subnet-b">
+          <mxGeometry x="330" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- Task service-bia-alb (zona B) -->
+        <mxCell id="task-b" value="Task: service-bia-alb&#xa;RUNNING&#xa;Container: bia&#xa;Port: 8080 (host: random)&#xa;CPU: 1 vCPU | Mem: 410 MB" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_ecs;strokeColor=#AD688F;fillColor=#F3EEF6;verticalLabelPosition=top;verticalAlign=bottom;align=center;html=1;fontSize=10;" vertex="1" parent="subnet-b">
+          <mxGeometry x="200" y="220" width="340" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="container-b" value="bia&#xa;Container&#xa;Image: ECR/bia:&lt;commit-hash&gt;&#xa;Port: 8080" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="subnet-b">
+          <mxGeometry x="330" y="270" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Task Definition (informativo) -->
+        <mxCell id="task-def" value="Task Definition&#xa;task-def-bia-alb:7&#xa;Network: bridge&#xa;Rolling Update&#xa;Min healthy: 50% | Max: 100%&#xa;AZ Rebalancing: Desativado&#xa;Placement: spread AZ + instância" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs_task;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="subnet-b">
+          <mxGeometry x="550" y="250" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ECS Service (informativo) -->
+        <mxCell id="ecs-service" value="ECS Service&#xa;service-bia-alb&#xa;Desired Count: 2&#xa;Running: 2" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="subnet-b">
+          <mxGeometry x="550" y="410" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  GitHub (fora de tudo)                                          -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="github" value="GitHub&#xa;Repositório&#xa;Webhook (push na branch principal)" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.github;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="1210" y="55" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  ACM Certificate                                                 -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="acm" value="ACM&#xa;Certificado SSL/TLS&#xa;HTTPS (porta 443)" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.certificate_manager;labelBackgroundColor=#ffffff;sketch=0;fontStyle=0;fontSize=10;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="100" y="55" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!--  SETAS / CONEXÕES                                               -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+
+        <!-- Internet → ALB -->
+        <mxCell id="edge-internet-alb" value="HTTP :80 / HTTPS :443" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#FF9900;strokeWidth=2;fontColor=#FF9900;fontSize=10;" edge="1" source="internet" target="alb" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ALB → Target Group -->
+        <mxCell id="edge-alb-tg" value="Forward (HTTPS :443)" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#FF9900;strokeWidth=2;fontColor=#FF9900;fontSize=10;" edge="1" source="alb" target="tg" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Target Group → EC2 zona A (port random) -->
+        <mxCell id="edge-tg-ec2a" value="porta aleatória" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#147EBA;strokeWidth=2;fontColor=#147EBA;fontSize=10;dashed=0;" edge="1" source="tg" target="ec2-a" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Target Group → EC2 zona B (port random) -->
+        <mxCell id="edge-tg-ec2b" value="porta aleatória" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#147EBA;strokeWidth=2;fontColor=#147EBA;fontSize=10;dashed=0;" edge="1" source="tg" target="ec2-b" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- EC2 A → RDS -->
+        <mxCell id="edge-ec2a-rds" value=":5432" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8C4FFF;strokeWidth=2;fontColor=#8C4FFF;fontSize=10;" edge="1" source="ec2-a" target="rds" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- EC2 B → RDS -->
+        <mxCell id="edge-ec2b-rds" value=":5432" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8C4FFF;strokeWidth=2;fontColor=#8C4FFF;fontSize=10;" edge="1" source="ec2-b" target="rds" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- bia-dev → RDS -->
+        <mxCell id="edge-dev-rds" value=":5432" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#8C4FFF;strokeWidth=2;fontColor=#8C4FFF;fontSize=10;dashed=1;" edge="1" source="ec2-dev" target="rds" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- SSM → bia-dev -->
+        <mxCell id="edge-ssm-dev" value="SSM Session" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#1D8102;strokeWidth=2;fontColor=#1D8102;fontSize=10;" edge="1" source="ssm" target="ec2-dev" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ACM → ALB -->
+        <mxCell id="edge-acm-alb" value="TLS 1.3" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#1D8102;strokeWidth=1.5;fontColor=#1D8102;fontSize=10;dashed=1;" edge="1" source="acm" target="alb" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- GitHub → CodePipeline -->
+        <mxCell id="edge-github-pipeline" value="webhook (push)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#FF9900;strokeWidth=2;fontColor=#FF9900;fontSize=10;" edge="1" source="github" target="codepipeline" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CodePipeline → CodeBuild -->
+        <mxCell id="edge-pipeline-build" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#FF9900;strokeWidth=2;" edge="1" source="codepipeline" target="codebuild" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CodeBuild → ECR -->
+        <mxCell id="edge-build-ecr" value="docker push" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#FF9900;strokeWidth=2;fontColor=#FF9900;fontSize=10;" edge="1" source="codebuild" target="ecr" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CodePipeline → ECS Service (deploy) -->
+        <mxCell id="edge-pipeline-ecs" value="Rolling Update Deploy" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#FF9900;strokeWidth=2;fontColor=#FF9900;fontSize=10;" edge="1" source="codepipeline" target="ecs-service" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ECR → Tasks (pull de imagem) -->
+        <mxCell id="edge-ecr-task-a" value="pull image" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#AD688F;strokeWidth=1.5;fontColor=#AD688F;fontSize=9;dashed=1;" edge="1" source="ecr" target="container-a" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-ecr-task-b" value="pull image" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#AD688F;strokeWidth=1.5;fontColor=#AD688F;fontSize=9;dashed=1;" edge="1" source="ecr" target="container-b" parent="aws-cloud">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

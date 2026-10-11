@@ -1,8 +1,8 @@
 # 🚀 Projeto BIA — Formação AWS
 
-Projeto educacional criado por [Henrylle Maia](https://github.com/henrylle/bia) para demonstrar, na prática, como construir e evoluir uma infraestrutura cloud na AWS — partindo de fundamentos até uma arquitetura com alta disponibilidade, load balancer e pipeline de CI/CD totalmente automatizado.
+Projeto educacional criado para demonstrar, na prática, como construir e evoluir uma infraestrutura cloud na AWS: partindo de fundamentos até uma arquitetura com alta disponibilidade, load balancer e pipeline de CI/CD totalmente automatizado.
 
-> **Stack:** Node.js · React · PostgreSQL · Docker · AWS ECS · ECR · RDS · ALB · CodePipeline · CodeBuild · SSM
+> **Stack:** Node.js · React · PostgreSQL · Docker · AWS ECS · ECR · RDS · ALB · CodePipeline · CodeBuild · SSM · Route53
 
 ---
 
@@ -10,24 +10,7 @@ Projeto educacional criado por [Henrylle Maia](https://github.com/henrylle/bia) 
 
 Toda a infraestrutura foi provisionada na região **`us-east-1` (N. Virginia)** usando **Amazon ECS com instâncias EC2** (sem Fargate).
 
-```
-Internet
-    │
-    ▼
-Application Load Balancer — bia-alb
-(us-east-1a  +  us-east-1b)
-    │
-    ├──────────────────────────┐
-    ▼                          ▼
-EC2 t3.micro               EC2 t3.micro
-(us-east-1a)               (us-east-1b)
-ECS cluster-bia-alb        ECS cluster-bia-alb
-    │                          │
-    └──────────┬───────────────┘
-               ▼
-        RDS PostgreSQL
-        (db.t3.micro)
-```
+<img width="1522" height="1032" alt="BIA AWS - Infraestrutura drawio" src="https://github.com/user-attachments/assets/d7e95852-2532-4e6a-8106-527d1427dc44" />
 
 O tráfego HTTP (porta 80) é automaticamente redirecionado para HTTPS (porta 443) pelo ALB. A comunicação entre o ALB e as instâncias ECS usa **portas aleatórias** — por isso o modo de rede é `bridge` e o Security Group do EC2 libera `All TCP` vindo do ALB.
 
@@ -324,4 +307,4 @@ bia/
 
 ---
 
-*Projeto educacional - Imersão AWS + IA com Henrylle Maia*
+*Projeto educacional - Imersão AWS + IA com [Henrylle Maia](https://github.com/henrylle/bia) *

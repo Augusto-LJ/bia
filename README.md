@@ -10,7 +10,7 @@ Projeto educacional criado para demonstrar, na prática, como construir e evolui
 
 Toda a infraestrutura foi provisionada na região **`us-east-1` (N. Virginia)** usando **Amazon ECS com instâncias EC2** (sem Fargate).
 
-<img width="1522" height="1032" alt="BIA AWS - Infraestrutura drawio" src="https://github.com/user-attachments/assets/d7e95852-2532-4e6a-8106-527d1427dc44" />
+<img width="1522" height="1032" alt="BIA AWS - Infraestrutura drawio" src="https://github.com/user-attachments/assets/374431e9-8735-4383-9620-96c7e0fa5ced" />
 
 O tráfego HTTP (porta 80) é automaticamente redirecionado para HTTPS (porta 443) pelo ALB. A comunicação entre o ALB e as instâncias ECS usa **portas aleatórias** — por isso o modo de rede é `bridge` e o Security Group do EC2 libera `All TCP` vindo do ALB.
 

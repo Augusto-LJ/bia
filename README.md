@@ -4,6 +4,10 @@ Projeto educacional criado para demonstrar, na prática, como construir e evolui
 
 > **Stack:** Node.js · React · PostgreSQL · Docker · AWS ECS · ECR · RDS · ALB · CodePipeline · CodeBuild · SSM · Route53
 
+Links de acesso (podem estar indisponíveis, porque o projeto foi feito usando o free tier da Amazon, que é limitade):
+- https://test.augustolima.dev.br/
+- https://test-dev.augustolima.dev.br/
+
 ---
 
 ## ☁️ Arquitetura AWS
